@@ -1,2 +1,0 @@
-recursive-include click_web/templates *
-recursive-include click_web/static *

@@ -1,0 +1,52 @@
+[tool.ruff]
+lint.ignore = [
+  "F401",
+  "F403",
+  "F405",
+  "N",
+  "D",
+  "ANN101",
+  "EM",
+  "TRY",
+  "ERA",
+  "FBT",
+  "TD",
+  "FIX",
+  "PLW",
+  "PLR",
+  "RUF009",
+  "PTH",
+  "PD",
+  "C901",
+  "ANN",
+  "ANN003",
+  "ANN002",
+  "ARG004",
+  "G004",
+  "S",
+  "BLE001",
+  "COM812",
+  "ISC001",
+  "RET",
+]
+lint.select = ["ALL"]
+lint.fixable = ["ALL"]
+lint.unfixable = []
+exclude = [".git", ".idea", ".mypy_cache", ".tox", ".venv"]
+target-version = "py311"
+line-length = 128
+indent-width = 4
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+
+[tool.pytest.ini_options]
+filterwarnings = [
+  "ignore::DeprecationWarning::",
+  "ignore::FutureWarning::",
+]
+addopts = "--cov --cov-report=lcov:coverage.info --cov-report=term"
+
+[tool.coverage.run]
+source = ["oxb_data_analysis"]

@@ -9,29 +9,29 @@ import click_web.resources.cmd_exec
 import click_web.resources.cmd_form
 import click_web.resources.index
 
-jinja_env = jinja2.Environment(extensions=['jinja2.ext.do'])
+jinja_env = jinja2.Environment(extensions=["jinja2.ext.do"])
 
-'The full path to the click script file to execute.'
+"The full path to the click script file to execute."
 script_file = None
-'The click root command to serve'
+"The click root command to serve"
 click_root_cmd = None
 
 
 def _get_output_folder():
-    _output_folder = (Path(tempfile.gettempdir()) / 'click-web')
+    _output_folder = Path(tempfile.gettempdir()) / "click-web"
     if not _output_folder.exists():
         _output_folder.mkdir()
     return _output_folder
 
 
-'Where to place result files for download'
+"Where to place result files for download"
 OUTPUT_FOLDER = str(_get_output_folder())
 
 _flask_app = None
 logger = None
 
 
-def create_click_web_app(module, command: click.BaseCommand, root='/'):
+def create_click_web_app(module, command: click.BaseCommand, root="/"):
     """
     Create a Flask app that wraps a click command. (Call once)
 
@@ -53,24 +53,22 @@ def create_click_web_app(module, command: click.BaseCommand, root='/'):
 
     _register(module, command)
 
-    _flask_app = Flask(__name__, static_url_path=root.rstrip('/') + '/static')
+    _flask_app = Flask(__name__, static_url_path=root.rstrip("/") + "/static")
 
-    _flask_app.config['APPLICATION_ROOT'] = root
-    root = root.rstrip('/')
+    _flask_app.config["APPLICATION_ROOT"] = root
+    root = root.rstrip("/")
 
     # add the "do" extension needed by our jinja templates
-    _flask_app.jinja_env.add_extension('jinja2.ext.do')
+    _flask_app.jinja_env.add_extension("jinja2.ext.do")
 
-    _flask_app.add_url_rule(root + '/', 'index', click_web.resources.index.index)
-    _flask_app.add_url_rule(root + '/<path:command_path>', 'command', click_web.resources.cmd_form.get_form_for)
+    _flask_app.add_url_rule(root + "/", "index", click_web.resources.index.index)
+    _flask_app.add_url_rule(root + "/<path:command_path>", "command", click_web.resources.cmd_form.get_form_for)
 
     executor = click_web.resources.cmd_exec.Executor()
-    _flask_app.add_url_rule(root + '/<path:command_path>', 'command_execute', executor.exec,
-                            methods=['POST'])
+    _flask_app.add_url_rule(root + "/<path:command_path>", "command_execute", executor.exec, methods=["POST"])
 
-    _flask_app.logger.info(f'OUTPUT_FOLDER: {OUTPUT_FOLDER}')
-    results_blueprint = Blueprint('results', __name__, static_url_path=root + '/static/results',
-                                  static_folder=OUTPUT_FOLDER)
+    _flask_app.logger.info(f"OUTPUT_FOLDER: {OUTPUT_FOLDER}")
+    results_blueprint = Blueprint("results", __name__, static_url_path=root + "/static/results", static_folder=OUTPUT_FOLDER)
     _flask_app.register_blueprint(results_blueprint)
 
     logger = _flask_app.logger
